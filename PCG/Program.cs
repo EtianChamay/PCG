@@ -13,11 +13,12 @@ namespace PCG
         {
             var map = new RoomSpace(new Point(0,0), new Point(MaxWidth,MaxHeight));
 
-            map.Split(4);
+            map.Split(11);
+            map.GenerateRoom();
 
             var board = new int[MaxWidth,MaxHeight];
 
-            map.Draw(board, 1);
+            map.Draw(board, 1,3);
             PrintBoard(board);
         }
 
