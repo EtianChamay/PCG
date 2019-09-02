@@ -5,23 +5,23 @@ using System.Linq;
 
 namespace PCG
 {
-    internal class Room
+    internal class RoomSpace
     {
-        private const int MIN_PADDING = 3;
+        private static readonly int MinPadding = GlobalConfiguration.MinPadding;
 
         private readonly Point _leftUpperPoint;
         private readonly Point _rightBottomPoint;
         private readonly Random _random;
-        private readonly List<Room> _subRooms;
+        private readonly List<RoomSpace> _subRooms;
 
         private Line _line;
 
-        public Room(Point leftUpperPoint, Point rightBottomPoint)
+        public RoomSpace(Point leftUpperPoint, Point rightBottomPoint)
         {
             _leftUpperPoint = leftUpperPoint;
             _rightBottomPoint = rightBottomPoint;
             _random = new Random();
-            _subRooms =  new List<Room>();
+            _subRooms =  new List<RoomSpace>();
         }
 
         public void Split(int depth)
@@ -31,17 +31,18 @@ namespace PCG
                 return;
             }
 
-            var splitDirection = CanSplit();
-            if (splitDirection == SplitDirection.None)
+            var splitOptions = SplitOptions();
+            if (splitOptions == SplitDirection.None)
             {
                 return;
             }
 
-            CalcLimitPoints(out var minStartPoint, out var minEndPoint);
             Point startPoint;
             Point endPoint;
 
-            switch (splitDirection)
+            CalcLimitPoints(out var minStartPoint, out var minEndPoint);
+
+            switch (splitOptions)
             {
                 case SplitDirection.Horizontal:
                     CreateHorizontalLine(minStartPoint, minEndPoint, out startPoint, out endPoint);
@@ -66,8 +67,8 @@ namespace PCG
 
             _line = new Line(startPoint,endPoint);
 
-            var roomA = new Room(_leftUpperPoint, endPoint);
-            var roomB = new Room(startPoint, _rightBottomPoint);
+            var roomA = new RoomSpace(_leftUpperPoint, endPoint);
+            var roomB = new RoomSpace(startPoint, _rightBottomPoint);
 
             _subRooms.Add(roomA);
             _subRooms.Add(roomB);
@@ -98,7 +99,7 @@ namespace PCG
             endPoint = new Point(_rightBottomPoint.X, yCoordination);
         }
 
-        public SplitDirection CanSplit()
+        private SplitDirection SplitOptions()
         {
             CalcLimitPoints(out var minStartPoint, out var minEndPoint);
 
@@ -125,8 +126,8 @@ namespace PCG
 
         private void CalcLimitPoints(out Point minStartPoint, out Point minEndPoint)
         {
-            minStartPoint = Point.Add(_leftUpperPoint, new Size(MIN_PADDING, MIN_PADDING));
-            minEndPoint = Point.Subtract(_rightBottomPoint, new Size(MIN_PADDING, MIN_PADDING));
+            minStartPoint = Point.Add(_leftUpperPoint, new Size(MinPadding, MinPadding));
+            minEndPoint = Point.Subtract(_rightBottomPoint, new Size(MinPadding, MinPadding));
         }
 
         public void Draw(int[,] board, int id)

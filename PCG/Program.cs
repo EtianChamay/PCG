@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Drawing;
-using System.Runtime.InteropServices;
-using PCG.DataStructures;
 
 namespace PCG
 {
     class Program
     {
-        private const int MAX_WIDTH = 25;
-        private const int MAX_HEIGHT = 50;
+        private static readonly int MaxWidth = GlobalConfiguration.MaxWidth;
+        private static readonly int MaxHeight = GlobalConfiguration.MaxHeight;
 
 
         static void Main(string[] args)
         {
-            var map = new Room(new Point(0,0), new Point(MAX_WIDTH,MAX_HEIGHT));
+            var map = new RoomSpace(new Point(0,0), new Point(MaxWidth,MaxHeight));
 
             map.Split(4);
 
-            var board = new int[MAX_WIDTH,MAX_HEIGHT];
+            var board = new int[MaxWidth,MaxHeight];
 
             map.Draw(board, 1);
             PrintBoard(board);
@@ -25,9 +23,9 @@ namespace PCG
 
         private static void PrintBoard(int[,] board)
         {
-            for (var x = 0; x < MAX_WIDTH; x++)
+            for (var x = 0; x < MaxWidth; x++)
             {
-                for (var y = 0; y < MAX_HEIGHT; y++)
+                for (var y = 0; y < MaxHeight; y++)
                 {
                     Console.Write(board[x, y]);
                 }
